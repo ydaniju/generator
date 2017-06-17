@@ -1,0 +1,35 @@
+#!/bin/bash
+
+while IFS=, read col1 col2
+do
+  #to create wallpaper with Imagemagick
+  if [[ $col1 ==  NID ]]; then
+    continue
+  fi
+  #to get the list of colors and save it in a folder
+  if [ -e $USER/color.txt ];then
+    null=$null1
+  else
+    convert -list color | cut -d "(" -f 1 | sed 's/rgb//g'| sed -n '6,$p' > color.txt
+  fi
+
+  #for selecting colors randomly 
+
+  select=$[ ( $RANDOM % 3 ) + 1 ]
+  num1=$[ ( $RANDOM % 680 ) + 1 ]
+  num2=$[ ( $RANDOM % 680 ) + 1 ]
+
+  color1=$(sed -n "${num1}p" color.txt)
+
+  color2=$(sed -n "${num2}p" color.txt)
+
+  echo creating image $col1.jpg
+  if [ $select == 1 ];then
+    convert -size 2000x1250  plasma:$color1 -blur 0x10 -paint 20 $col1.jpg
+  elif [ $select == 2 ];then
+    convert -size 2000x1250  plasma:$color2 -blur 0x10 -paint 20 $col1.jpg
+  else
+    convert -size 2000x1250 plasma:fractal -blur 0x10 -paint 20 $col1.jpg
+  fi
+
+done < dawah_list.csv
